@@ -1,4 +1,5 @@
-from flask import Flask , jsonify
+from re import template
+from flask import Flask , jsonify , render_template
 from users import users
 
 app = Flask(__name__)
@@ -6,6 +7,10 @@ app = Flask(__name__)
 @app.route('/',methods=['GET'])
 def ping():
     return jsonify({"response":"Hola Mundo"})
+
+@app.route('/index')
+def index():
+    return render_template('/index.html')
 
 @app.route('/users')
 def userHandler():
