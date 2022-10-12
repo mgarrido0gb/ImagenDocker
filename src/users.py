@@ -1,5 +1,5 @@
 users = [
-    {"name":"matias"},
-    {"name":"juan"},
-    {"name":"laura"}
+    {"nombre":"matias"},
+    {"correo":"juan"},
+    {"telefono":"laura"}
 ]
