@@ -19,6 +19,16 @@ INFO = {
         "apellido":"henriquez"
     }
 }
+def get_hit_count():
+    retries =5
+    while True:
+        try:
+            return cache.incr('hits')
+        except redis.exceptions.ConnectionError as exc:
+            if retries == 0:
+                raise exc
+            retries -=1
+            time.sleep(0.5)
 
 
 #JSON , RETORNAREMOS EL OBJETO
@@ -26,6 +36,21 @@ INFO = {
 def get_json():
     res =  make_response(jsonify(INFO),200)
     return res
+
+
+#MÉTODO POST creamos una coleccion dentro en nuestro json
+@app.route("/json/<collection>",methods=["POST"])
+def create_collection(collection):
+    #INSERCION DE DATOS
+    req = request.get_json()
+    if collection in INFO:
+        res = make_response(jsonify({"error":"la colección existe"}))
+        return res
+    INFO.update({collection: req})
+    
+    res = make_response(jsonify({"mensaje":"coleccion creada"}),201)
+    return res
+
 
 #MÉTODO PUT
 @app.route("/json/<collection>/<persona>",methods=["PUT"])
@@ -44,18 +69,6 @@ def update_collection(collection,persona):
     
 
 
-#MÉTODO POST creamos una coleccion dentro en nuestro json
-@app.route("/json/<collection>",methods=["POST"])
-def create_collection(collection):
-    #INSERCION DE DATOS
-    req = request.get_json()
-    if collection in INFO:
-        res = make_response(jsonify({"error":"la colección existe"}))
-        return res
-    INFO.update({collection: req})
-    
-    res = make_response(jsonify({"mensaje":"coleccion creada"}),201)
-    return res
 
 
 #MÉTODO DELETE
@@ -82,16 +95,6 @@ def home():
 def userHandler():
     return jsonify({"users":users})
 
-def get_hit_count():
-    retries =5
-    while True:
-        try:
-            return cache.incr('hits')
-        except redis.exceptions.ConnectionError as exc:
-            if retries == 0:
-                raise exc
-            retries -=1
-            time.sleep(0.5)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=4000,debug=True)
