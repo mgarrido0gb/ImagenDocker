@@ -4,7 +4,7 @@ services:
   app: 
     build: 
       context: ./
-    
+    #PUERTOS EN DÓNDE SE EJECUTARÁ
     ports:
       - "4000:4000"
    
@@ -12,6 +12,7 @@ services:
     volumes: 
       - .:/app
     environment:
+    #guardar y ejecutar los ambios sin necesidad de reiniciar contenedor
        FLASK_DEBUG: development
   redis:
     image: "redis:alpine"
