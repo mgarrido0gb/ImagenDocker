@@ -7,5 +7,11 @@ services:
     
     ports:
       - "4000:4000"
+   
+   #si se realiza un cambio se vera reflejado
+    volumes: 
+      - .:/app
+    environment:
+       FLASK_DEBUG: development
   redis:
     image: "redis:alpine"
