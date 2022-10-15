@@ -15,4 +15,5 @@ services:
     #guardar y ejecutar los ambios sin necesidad de reiniciar contenedor
        FLASK_DEBUG: development
   redis:
+  #instalar una imagen de redis
     image: "redis:alpine"
