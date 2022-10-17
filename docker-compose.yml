@@ -7,7 +7,8 @@ services:
     #PUERTOS EN DÓNDE SE EJECUTARÁ
     ports:
       - "4000:4000"
-   
+    #nombre del container
+    container_name: python-test-app
    #si se realiza un cambio se vera reflejado
     volumes: 
       - .:/app
