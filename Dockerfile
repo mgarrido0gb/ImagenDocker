@@ -25,4 +25,4 @@ RUN pip install -r requirements.txt
 COPY . .
 
 #EJECUTAMOS LA APLICACIÓN
-CMD [ "flask","run" ]
+CMD [ "python3","src/app.py" ]
