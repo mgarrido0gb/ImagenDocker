@@ -1,5 +1,4 @@
 users = [
-    {"nombre":"matias"},
-    {"correo":"juan"},
-    {"telefono":"laura"}
+    {"correo":"juan","nombre":"matias","telefono":877},
+    {"correo":"lau","nombre":"laura","telefono":344555}
 ]

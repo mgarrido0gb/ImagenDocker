@@ -1,5 +1,6 @@
 
-from multiprocessing.connection import Client
+from json import JSONDecodeError
+import json
 from re import template
 import redis
 import time
@@ -9,16 +10,7 @@ from users import users
 app = Flask(__name__)
 cache = redis.Redis(host='redis', port=6379)
 
-INFO = {
-    "persona1":{
-        "nombre":"matias",
-        "apellido":"figueroa"
-    },
-    "persona2":{
-        "nombre":"juan",
-        "apellido":"henriquez"
-    }
-}
+
 def get_hit_count():
     retries =5
     while True:
@@ -32,55 +24,67 @@ def get_hit_count():
 
 
 #JSON , RETORNAREMOS EL OBJETO
+#MÉTODO GET , RETORNAMOS LISTADO
 @app.route("/json")
 def get_json():
-    res =  make_response(jsonify(INFO),200)
-    return res
+    return jsonify({"Usuarios":users})
+
+#METODO GET , RETORNAMOS USUARIO SEGÚN NOMBRE
+@app.route('/usuarios/<string:nombre>')
+def getUsers(nombre):
+    usersFound=[user for user in users if user['nombre'] == nombre]
+    if (len(usersFound)>0):
+        return jsonify({"Usuario":usersFound[0]})
+    return jsonify({"msg":"Usuario no existe"})
 
 
 #MÉTODO POST creamos una coleccion dentro en nuestro json
-@app.route("/json/<collection>",methods=["POST"])
-def create_collection(collection):
-    #INSERCION DE DATOS
-    req = request.get_json()
-    if collection in INFO:
-        res = make_response(jsonify({"error":"la colección existe"}))
-        return res
-    INFO.update({collection: req})
-    
-    res = make_response(jsonify({"mensaje":"coleccion creada"}),201)
-    return res
+@app.route("/usuarios",methods=["POST"])
+def create_users():
+    #creamos el usuario
+    new_usuario = {
+        "nombre": request.json['nombre'],
+        "correo": request.json['correo'],
+        "telefono": request.json['telefono']
+    }
+    #agregar nuevo dato
+    users.append(new_usuario)
+    return jsonify({"msg":"Usuario agregado existosamente", "user":users})
 
 
 #MÉTODO PUT
-@app.route("/json/<collection>/<persona>",methods=["PUT"])
-def update_collection(collection,persona):
-    #INSERCION DE DATOS
-    req = request.get_json()
-    if collection in INFO:
-        if persona :
-            INFO[collection][persona] = req["new"]
-            res = make_response(jsonify({"res":INFO[collection]}),200)
-            return res
-        res = make_response(jsonify({"error":"Persona no existe"}),400)
-        return res
-    res = make_response(jsonify({"mensaje":"coleccion creada"}),201)
-    return res
+@app.route("/usuarios/<string:nombre>",methods=["PUT"])
+def edit_user(nombre):
+    usersFound=[user for user in users if user['nombre'] == nombre]
+     #si el usuario es encontrado
+    if (len(usersFound)>0):
+        usersFound[0]['nombre']= request.json['nombre']
+        usersFound[0]['correo']= request.json['correo']
+        usersFound[0]['telefono']= request.json['telefono']
+        return jsonify({
+            "msg":"Usuario actualizado",
+            "user": usersFound[0]
+        })
+    return jsonify({"msg":"Usuario no encontrado"})
+         
+    
     
 
 
 
 
 #MÉTODO DELETE
-@app.route("/json/<collection>",methods=["DELETE"])
-def delete_collection(collection):
-    if collection in INFO:
-        del INFO[collection]
-        res = make_response(jsonify(INFO),200)
-        return res
-    res = make_response(jsonify({"error":"la colección no existe"}),400)
-    return res
-
+@app.route("/usuarios/<string:nombre>",methods=["DELETE"])
+def delete_user(nombre):
+    usersFound=[user for user in users if user['nombre'] == nombre]
+    if len(usersFound)>0:
+        users.remove(usersFound[0])
+        return jsonify({
+            "msg":"Usuario Eliminado",
+            "users":users
+        })
+    return jsonify({"msg":"Usuario no ncontrado"}
+                   )
 @app.route('/temp')
 def template():
     return render_template('/index.html')
