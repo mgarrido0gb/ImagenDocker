@@ -1,15 +1,17 @@
 version: '3'
 
 services:
-  app: 
+  python-test-app: 
     build: 
-      context: ./
+      context: .
+      dockerfile: Dockerfile
     #PUERTOS EN DÓNDE SE EJECUTARÁ
     ports:
       - "4000:4000"
     network_mode: bridge
     #nombre del container
     container_name: python-test-app
+    image: python-test-app
    #si se realiza un cambio se vera reflejado
     volumes: 
       - .:/app
@@ -19,3 +21,4 @@ services:
   redis:
   #instalar una imagen de redis
     image: "redis:alpine"
+    network_mode: bridge

@@ -6,10 +6,11 @@ import redis
 import time
 from flask import Flask , jsonify , render_template , make_response , request
 from users import users
+from flask_restplus import Api , Namespace
 
-app = Flask(__name__)
+
 cache = redis.Redis(host='redis', port=6379)
-
+ruta_detectada = Namespace('routes/rutas')
 
 def get_hit_count():
     retries =5
@@ -25,12 +26,12 @@ def get_hit_count():
 
 #JSON , RETORNAREMOS EL OBJETO
 #MÉTODO GET , RETORNAMOS LISTADO
-@app.route("/json")
+@ruta_detectada.route("/json")
 def get_json():
     return jsonify({"Usuarios":users})
 
 #METODO GET , RETORNAMOS USUARIO SEGÚN NOMBRE
-@app.route('/usuarios/<string:nombre>')
+@ruta_detectada.route('/usuarios/<string:nombre>')
 def getUsers(nombre):
     usersFound=[user for user in users if user['nombre'] == nombre]
     if (len(usersFound)>0):
@@ -39,7 +40,7 @@ def getUsers(nombre):
 
 
 #MÉTODO POST creamos una coleccion dentro en nuestro json
-@app.route("/usuarios",methods=["POST"])
+@ruta_detectada.route("/usuarios",methods=["POST"])
 def create_users():
     #creamos el usuario
     new_usuario = {
@@ -53,7 +54,7 @@ def create_users():
 
 
 #MÉTODO PUT
-@app.route("/usuarios/<string:nombre>",methods=["PUT"])
+@ruta_detectada.route("/usuarios/<string:nombre>",methods=["PUT"])
 def edit_user(nombre):
     usersFound=[user for user in users if user['nombre'] == nombre]
      #si el usuario es encontrado
@@ -74,7 +75,7 @@ def edit_user(nombre):
 
 
 #MÉTODO DELETE
-@app.route("/usuarios/<string:nombre>",methods=["DELETE"])
+@ruta_detectada.route("/usuarios/<string:nombre>",methods=["DELETE"])
 def delete_user(nombre):
     usersFound=[user for user in users if user['nombre'] == nombre]
     if len(usersFound)>0:
@@ -85,22 +86,21 @@ def delete_user(nombre):
         })
     return jsonify({"msg":"Usuario no ncontrado"}
                    )
-@app.route('/temp')
+@ruta_detectada.route('/temp')
 def template():
     return render_template('/index.html')
 
-@app.route('/')
+@ruta_detectada.route('/')
 def home():
     return "<h1 style='color:blue'>Home!</h1>"
 
 
 
-@app.route('/users')
+@ruta_detectada.route('/users')
 def userHandler():
     return jsonify({"users":users})
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0",port=4000,debug=True)
-
+    ruta_detectada.run(host="0.0.0.0",port=4000,debug=True)
 
