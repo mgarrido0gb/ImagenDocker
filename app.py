@@ -5,10 +5,11 @@ from flask import Flask
 from users import users
 from flask_restplus import Api
 from routes.rutas import ruta_detectada
+
 app = Flask(__name__)
 api = Api(app)
 
-api.add_namespace(ruta_detectada,path='routes/rutas')
+api.add_namespace(ruta_detectada,path='/rutas')
 cache = redis.Redis(host='redis', port=6379)
 
 

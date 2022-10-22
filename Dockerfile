@@ -8,11 +8,11 @@ WORKDIR /app
 COPY . /app
 
 
-
+RUN  pip install --upgrade pip
 #leer archivos del requeriments.txt e instalarlos
 RUN pip install -r requirements.txt
 
 
 
 #EJECUTAMOS LA APLICACIÓN
-CMD ["gunicorn", "app:app",  "-w 8", "-t 3600", "-b", "0.0.0.0:4000"]
+CMD ["python","app.py"]

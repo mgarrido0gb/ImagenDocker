@@ -1,16 +1,17 @@
 
+from importlib import resources
 from json import JSONDecodeError
 import json
 from re import template
 import redis
 import time
-from flask import Flask , jsonify , render_template , make_response , request
+from flask import jsonify , request
 from users import users
-from flask_restplus import Api , Namespace
+from flask_restplus import Namespace , Resource
 
 
 cache = redis.Redis(host='redis', port=6379)
-ruta_detectada = Namespace('routes/rutas')
+ruta_detectada = Namespace('ruta_detectada',description='Rutas detectadas')
 
 def get_hit_count():
     retries =5
@@ -26,17 +27,21 @@ def get_hit_count():
 
 #JSON , RETORNAREMOS EL OBJETO
 #MÉTODO GET , RETORNAMOS LISTADO
-@ruta_detectada.route("/json")
-def get_json():
-    return jsonify({"Usuarios":users})
+@ruta_detectada.route("/usuarios")
+class usuarios(Resource):
+    def get(self):
+        return jsonify({"Usuarios":users})
 
+
+'''''''''
 #METODO GET , RETORNAMOS USUARIO SEGÚN NOMBRE
 @ruta_detectada.route('/usuarios/<string:nombre>')
-def getUsers(nombre):
-    usersFound=[user for user in users if user['nombre'] == nombre]
-    if (len(usersFound)>0):
-        return jsonify({"Usuario":usersFound[0]})
-    return jsonify({"msg":"Usuario no existe"})
+class Usuarios(Resource):
+    def usuarios(nombre):
+     usersFound=[user for user in users if user['nombre'] == nombre]
+     if (len(usersFound)>0):
+         return jsonify({"Usuario":usersFound[0]})
+     return jsonify({"msg":"Usuario no existe"})
 
 
 #MÉTODO POST creamos una coleccion dentro en nuestro json
@@ -103,4 +108,4 @@ def userHandler():
 
 if __name__ == '__main__':
     ruta_detectada.run(host="0.0.0.0",port=4000,debug=True)
-
+'''''''''
