@@ -5,7 +5,6 @@ import string
 import redis
 import time
 from flask import jsonify , request
-from symbol import parameters
 from users import users
 from flask_restplus import Namespace , Resource
 
@@ -34,7 +33,7 @@ class usuarios(Resource):
 
 
 #METODO GET , RETORNAMOS USUARIO SEGÚN NOMBRE
-@ruta_detectada.route('/usuarios/<string:nombre>',methods=['GET'])
+@ruta_detectada.route('/usuariosNombre/<string:nombre>',methods=['GET'])
 class usuariosNombre(Resource):
     def get(self,nombre):
      usersFound=[user for user in users if user['nombre'] == nombre]
@@ -43,14 +42,14 @@ class usuariosNombre(Resource):
      return jsonify({"msg":"Usuario no existe"})
  
 #MÉTODO POST creamos una coleccion dentro en nuestro json
-@ruta_detectada.route("/usuarios",methods=["POST"])
-class agregarUsuario(Resource):
+@ruta_detectada.route("/usuariosPost",methods=["POST"])
+class usuariosPost(Resource):
     def post(self):
          #creamos el usuario
         new_usuario = {
-            "nombre": request.json['nombre'],
-            "correo": request.json['correo'],
-            "telefono": request.json['telefono']
+            "nombre": request.form['nombre'],
+            "correo": request.form['correo'],
+            "telefono": request.form['telefono']
         }
     #agregar nuevo dato
         users.append(new_usuario)
@@ -58,8 +57,8 @@ class agregarUsuario(Resource):
 
 
 #MÉTODO PUT
-@ruta_detectada.route("/usuarios/<string:nombre>",methods=["PUT"])
-class usuariosUpdate(Resource):
+@ruta_detectada.route("/usuariosPut/<string:nombre>",methods=["PUT"])
+class usuariosPut(Resource):
     def put(self,nombre):
         usersFound=[user for user in users if user['nombre'] == nombre]
         #si el usuario es encontrado
