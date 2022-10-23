@@ -3,6 +3,7 @@ from importlib import resources
 from json import JSONDecodeError
 import json
 from re import template
+import string
 import redis
 import time
 from flask import jsonify , request
@@ -33,16 +34,16 @@ class usuarios(Resource):
         return jsonify({"Usuarios":users})
 
 
-'''''''''
 #METODO GET , RETORNAMOS USUARIO SEGÚN NOMBRE
 @ruta_detectada.route('/usuarios/<string:nombre>')
-class Usuarios(Resource):
-    def usuarios(nombre):
+class usuariosNombre(Resource):
+    def get(self,nombre):
      usersFound=[user for user in users if user['nombre'] == nombre]
      if (len(usersFound)>0):
          return jsonify({"Usuario":usersFound[0]})
      return jsonify({"msg":"Usuario no existe"})
 
+'''''
 
 #MÉTODO POST creamos una coleccion dentro en nuestro json
 @ruta_detectada.route("/usuarios",methods=["POST"])
