@@ -1,5 +1,3 @@
-from crypt import methods
-from importlib import resources
 from json import JSONDecodeError
 import json
 from re import template
@@ -7,6 +5,7 @@ import string
 import redis
 import time
 from flask import jsonify , request
+from symbol import parameters
 from users import users
 from flask_restplus import Namespace , Resource
 
@@ -42,21 +41,7 @@ class usuariosNombre(Resource):
      if (len(usersFound)>0):
          return jsonify({"Usuario":usersFound[0]})
      return jsonify({"msg":"Usuario no existe"})
-
-#MÉTODO DELETE
-@ruta_detectada.route("/usuarios/<string:nombre>",methods=["DELETE"])
-class usuariosDelete(Resource):
-    def delete(self,nombre):
-        usersFound=[user for user in users if user['nombre'] == nombre]
-        if len(usersFound)>0:
-            users.remove(usersFound[0])
-            return jsonify({
-                "msg":"Usuario Eliminado",
-                "users":users
-                })
-        return jsonify({"msg":"Usuario no ncontrado"})
-    
-''''''''' 
+ 
 #MÉTODO POST creamos una coleccion dentro en nuestro json
 @ruta_detectada.route("/usuarios",methods=["POST"])
 class agregarUsuario(Resource):
@@ -74,17 +59,33 @@ class agregarUsuario(Resource):
 
 #MÉTODO PUT
 @ruta_detectada.route("/usuarios/<string:nombre>",methods=["PUT"])
-def edit_user(nombre):
-    usersFound=[user for user in users if user['nombre'] == nombre]
-     #si el usuario es encontrado
-    if (len(usersFound)>0):
-        usersFound[0]['nombre']= request.json['nombre']
-        usersFound[0]['correo']= request.json['correo']
-        usersFound[0]['telefono']= request.json['telefono']
-        return jsonify({
-            "msg":"Usuario actualizado",
-            "user": usersFound[0]
-        })
-    return jsonify({"msg":"Usuario no encontrado"})
+class usuariosUpdate(Resource):
+    def put(self,nombre):
+        usersFound=[user for user in users if user['nombre'] == nombre]
+        #si el usuario es encontrado
+        if (len(usersFound)>0):
+            usersFound[0]['nombre']= request.json['nombre']
+            usersFound[0]['correo']= request.json['correo']
+            usersFound[0]['telefono']= request.json['telefono']
+            return jsonify({
+                "msg":"Usuario actualizado",
+                "user": usersFound[0]
+            })
+        return jsonify({"msg":"Usuario no encontrado"})
 
-'''''
+
+
+#MÉTODO DELETE
+@ruta_detectada.route("/usuarios/<string:nombre>",methods=["DELETE"])
+class usuariosDelete(Resource):
+    def delete(self,nombre):
+        usersFound=[user for user in users if user['nombre'] == nombre]
+        if len(usersFound)>0:
+            users.remove(usersFound[0])
+            return jsonify({
+                "msg":"Usuario Eliminado",
+                "users":users
+                })
+        return jsonify({"msg":"Usuario no ncontrado"})
+    
+ 
