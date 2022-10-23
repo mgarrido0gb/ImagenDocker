@@ -1,4 +1,4 @@
-
+from crypt import methods
 from importlib import resources
 from json import JSONDecodeError
 import json
@@ -28,14 +28,14 @@ def get_hit_count():
 
 #JSON , RETORNAREMOS EL OBJETO
 #MÉTODO GET , RETORNAMOS LISTADO
-@ruta_detectada.route("/usuarios")
+@ruta_detectada.route("/usuarios",methods=['GET'])
 class usuarios(Resource):
     def get(self):
         return jsonify({"Usuarios":users})
 
 
 #METODO GET , RETORNAMOS USUARIO SEGÚN NOMBRE
-@ruta_detectada.route('/usuarios/<string:nombre>')
+@ruta_detectada.route('/usuarios/<string:nombre>',methods=['GET'])
 class usuariosNombre(Resource):
     def get(self,nombre):
      usersFound=[user for user in users if user['nombre'] == nombre]
@@ -43,20 +43,33 @@ class usuariosNombre(Resource):
          return jsonify({"Usuario":usersFound[0]})
      return jsonify({"msg":"Usuario no existe"})
 
-'''''
-
+#MÉTODO DELETE
+@ruta_detectada.route("/usuarios/<string:nombre>",methods=["DELETE"])
+class usuariosDelete(Resource):
+    def delete(self,nombre):
+        usersFound=[user for user in users if user['nombre'] == nombre]
+        if len(usersFound)>0:
+            users.remove(usersFound[0])
+            return jsonify({
+                "msg":"Usuario Eliminado",
+                "users":users
+                })
+        return jsonify({"msg":"Usuario no ncontrado"})
+    
+''''''''' 
 #MÉTODO POST creamos una coleccion dentro en nuestro json
 @ruta_detectada.route("/usuarios",methods=["POST"])
-def create_users():
-    #creamos el usuario
-    new_usuario = {
-        "nombre": request.json['nombre'],
-        "correo": request.json['correo'],
-        "telefono": request.json['telefono']
-    }
+class agregarUsuario(Resource):
+    def post(self):
+         #creamos el usuario
+        new_usuario = {
+            "nombre": request.json['nombre'],
+            "correo": request.json['correo'],
+            "telefono": request.json['telefono']
+        }
     #agregar nuevo dato
-    users.append(new_usuario)
-    return jsonify({"msg":"Usuario agregado existosamente", "user":users})
+        users.append(new_usuario)
+        return jsonify({"msg":"Usuario agregado existosamente", "user":users})
 
 
 #MÉTODO PUT
@@ -73,40 +86,5 @@ def edit_user(nombre):
             "user": usersFound[0]
         })
     return jsonify({"msg":"Usuario no encontrado"})
-         
-    
-    
 
-
-
-
-#MÉTODO DELETE
-@ruta_detectada.route("/usuarios/<string:nombre>",methods=["DELETE"])
-def delete_user(nombre):
-    usersFound=[user for user in users if user['nombre'] == nombre]
-    if len(usersFound)>0:
-        users.remove(usersFound[0])
-        return jsonify({
-            "msg":"Usuario Eliminado",
-            "users":users
-        })
-    return jsonify({"msg":"Usuario no ncontrado"}
-                   )
-@ruta_detectada.route('/temp')
-def template():
-    return render_template('/index.html')
-
-@ruta_detectada.route('/')
-def home():
-    return "<h1 style='color:blue'>Home!</h1>"
-
-
-
-@ruta_detectada.route('/users')
-def userHandler():
-    return jsonify({"users":users})
-
-
-if __name__ == '__main__':
-    ruta_detectada.run(host="0.0.0.0",port=4000,debug=True)
-'''''''''
+'''''
