@@ -10,7 +10,7 @@ app = Flask(__name__)
 api = Api(app)
 
 api.add_namespace(ruta_detectada,path='/rutas')
-cache = redis.Redis(host='redis', port=6379)
+
 
 
 

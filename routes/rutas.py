@@ -1,7 +1,6 @@
 from json import JSONDecodeError
 import json
 from re import template
-import string
 import redis
 import time
 from flask import jsonify , request
@@ -33,7 +32,7 @@ class usuarios(Resource):
 
 
 #METODO GET , RETORNAMOS USUARIO SEGÚN NOMBRE
-@ruta_detectada.route('/usuariosNombre/<string:nombre>',methods=['GET'])
+@ruta_detectada.route('/usuariospornombre/<string:nombre>',methods=['GET'])
 class usuariosNombre(Resource):
     def get(self,nombre):
      usersFound=[user for user in users if user['nombre'] == nombre]
@@ -42,14 +41,14 @@ class usuariosNombre(Resource):
      return jsonify({"msg":"Usuario no existe"})
  
 #MÉTODO POST creamos una coleccion dentro en nuestro json
-@ruta_detectada.route("/usuariosPost",methods=["POST"])
+@ruta_detectada.route("/usuariospost",methods=["POST"])
 class usuariosPost(Resource):
     def post(self):
          #creamos el usuario
         new_usuario = {
-            "nombre": request.form['nombre'],
-            "correo": request.form['correo'],
-            "telefono": request.form['telefono']
+            "nombre": request.json['nombre'],
+            "correo": request.json['correo'],
+            "telefono": request.json['telefono']
         }
     #agregar nuevo dato
         users.append(new_usuario)
@@ -57,7 +56,7 @@ class usuariosPost(Resource):
 
 
 #MÉTODO PUT
-@ruta_detectada.route("/usuariosPut/<string:nombre>",methods=["PUT"])
+@ruta_detectada.route("/usuariosput/<string:nombre>",methods=["PUT"])
 class usuariosPut(Resource):
     def put(self,nombre):
         usersFound=[user for user in users if user['nombre'] == nombre]
@@ -75,7 +74,7 @@ class usuariosPut(Resource):
 
 
 #MÉTODO DELETE
-@ruta_detectada.route("/usuarios/<string:nombre>",methods=["DELETE"])
+@ruta_detectada.route("/usuariosdelete/<string:nombre>",methods=["DELETE"])
 class usuariosDelete(Resource):
     def delete(self,nombre):
         usersFound=[user for user in users if user['nombre'] == nombre]
