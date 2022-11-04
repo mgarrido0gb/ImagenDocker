@@ -9,8 +9,8 @@ from routes.rutas import ruta_detectada
 app = Flask(__name__)
 api = Api(app)
 
-api.add_namespace(ruta_detectada,path='/rutas')
 
+api.add_namespace(ruta_detectada,path='/rutas')
 
 
 

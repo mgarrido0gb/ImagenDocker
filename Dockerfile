@@ -14,5 +14,5 @@ RUN pip install -r requirements.txt
 
 
 
-#EJECUTAMOS LA APLICACIÓN
+#EJECUTAMOS LA APLICACIÓN"
 CMD ["python","app.py"]

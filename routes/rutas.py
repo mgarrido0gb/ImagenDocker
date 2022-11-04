@@ -28,7 +28,7 @@ def get_hit_count():
 @ruta_detectada.route("/usuarios",methods=['GET'])
 class usuarios(Resource):
     def get(self):
-        return jsonify({"Usuarios":users})
+        return jsonify(users)
 
 
 #METODO GET , RETORNAMOS USUARIO SEGÚN NOMBRE
